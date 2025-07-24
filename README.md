@@ -1,5 +1,16 @@
 # Vaulted - Password Manager WIP
 
+## Security Features
+
+- Mobile Access Security
+  - 4-digit PIN implementation
+  - Biometric authentication (fingerprint/face recognition)
+  - Session timeout controls
+
+## Mobile App Development
+
+- [ ] Android Development
+
 ## User Features Roadmap
 
 1. Master Password Implementation
