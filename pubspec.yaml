@@ -64,6 +64,9 @@ flutter:
   assets:
     - assets/google_icon.png
     - assets/twitch_icon.png
+    - assets/github_icon.png
+    - assets/facebook_icon.png
+    - assets/mercado_icon.png
     - assets/none_icon.png
 
   # To add assets to your application, add an assets section, like this:

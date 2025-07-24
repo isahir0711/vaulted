@@ -60,9 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _editPasswordController = TextEditingController();
 
+  final TextEditingController _editUserNameController = TextEditingController();
+
   List<Password> passwords = [];
   Password? selectedPassword;
   AccountTypes selectedAccountType = AccountTypes.Google;
+  late String selectedUserName;
   @override
   void initState() {
     _printPasswords();
@@ -73,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       selectedPassword = password;
       selectedAccountType = password.accountType;
+      _editUserNameController.text = password.userNameOrEmail;
       // Decrypt and set the password for editing
       final decryptedPassword = Encryption().decryptPassword(password.encryptedValue, password.iv);
       _editPasswordController.text = decryptedPassword;
@@ -88,13 +92,23 @@ class _MyHomePageState extends State<MyHomePage> {
     print(passwords);
   }
 
+  Future<void> _deleteAllPasswords() async {
+    await Dbservice().deleteAll();
+  }
+
   Future<void> _updatePassword() async {
-    if (selectedPassword != null && _editPasswordController.text.isNotEmpty) {
+    if (selectedPassword != null &&
+        _editPasswordController.text.isNotEmpty &&
+        _editUserNameController.text.isNotEmpty) {
       // Delete the old password
       await Dbservice().deletePassword(selectedPassword!.id!);
 
       // Create a new encrypted password with the updated values
-      Encryption().encryptPassword(_editPasswordController.text, accountType: selectedAccountType);
+      Encryption().encryptPassword(
+        _editPasswordController.text,
+        _editUserNameController.text,
+        accountType: selectedAccountType,
+      );
 
       // Refresh the passwords list
       await _printPasswords();
@@ -116,6 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _showAddPasswordDialog() async {
     final TextEditingController passwordController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController();
     AccountTypes selectedAccountType = AccountTypes.Google;
 
     await showDialog(
@@ -124,16 +139,13 @@ class _MyHomePageState extends State<MyHomePage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Add New Password'),
+              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+              backgroundColor: Colors.white,
+              title: const Text('Add New Password', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
-                    controller: passwordController,
-                    decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 16),
+                  //AccountType DropDown
                   DropdownButtonFormField<AccountTypes>(
                     value: selectedAccountType,
                     decoration: const InputDecoration(labelText: 'Account Type', border: OutlineInputBorder()),
@@ -148,6 +160,27 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                   ),
+                  const SizedBox(height: 16),
+                  //Username Textfield
+                  TextField(
+                    controller: usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.account_circle_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  //Password textfield
+                  TextField(
+                    controller: passwordController,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.key),
+                    ),
+                    obscureText: true,
+                  ),
                 ],
               ),
               actions: [
@@ -161,7 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () async {
                     if (passwordController.text.isNotEmpty) {
                       // Encrypt and save the password
-                      Encryption().encryptPassword(passwordController.text, accountType: selectedAccountType);
+                      Encryption().encryptPassword(
+                        passwordController.text,
+                        usernameController.text,
+                        accountType: selectedAccountType,
+                      );
 
                       // Refresh the passwords list
                       await _printPasswords();
@@ -288,78 +325,111 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Account Details',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey[800],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 24),
-
-                                    // Account Type Selector
-                                    Text(
-                                      'Account Type',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    DropdownButtonFormField<AccountTypes>(
-                                      value: selectedAccountType,
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      ),
-                                      items: AccountTypes.values.map((AccountTypes type) {
-                                        return DropdownMenuItem<AccountTypes>(value: type, child: Text(type.name));
-                                      }).toList(),
-                                      onChanged: (AccountTypes? newValue) {
-                                        if (newValue != null) {
-                                          setState(() {
-                                            selectedAccountType = newValue;
-                                          });
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 24),
-
-                                    // Password Field
-                                    Text(
-                                      'Password',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey[700],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
                                     Row(
+                                      spacing: 12,
                                       children: [
-                                        Expanded(
-                                          child: TextField(
-                                            controller: _editPasswordController,
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                            ),
-                                            obscureText: true,
+                                        Image(
+                                          height: 40,
+                                          width: 40,
+                                          image: AssetImage(
+                                            'assets/${selectedAccountType.name.toLowerCase()}_icon.png',
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        IconButton(
-                                          onPressed: _copyToClipboard,
-                                          icon: const Icon(Icons.copy),
-                                          tooltip: 'Copy to clipboard',
-                                          style: IconButton.styleFrom(
-                                            backgroundColor: Colors.grey[200],
-                                            padding: const EdgeInsets.all(12),
+                                        Text(
+                                          selectedAccountType.name,
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[800],
                                           ),
                                         ),
                                       ],
+                                    ),
+                                    const SizedBox(height: 24),
+
+                                    const SizedBox(height: 24),
+
+                                    // username Field
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.account_circle_outlined, color: Colors.grey, size: 20),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Username',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                TextField(
+                                                  controller: _editUserNameController,
+                                                  style: const TextStyle(fontSize: 14),
+                                                  decoration: const InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: 'example@example.com',
+                                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Password Field
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.lock_outline, color: Colors.grey, size: 20),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  'Password',
+                                                  style: TextStyle(
+                                                    color: Colors.grey,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                TextField(
+                                                  controller: _editPasswordController,
+                                                  style: const TextStyle(fontSize: 14),
+                                                  decoration: const InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: '••••••••••••',
+                                                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                                                  ),
+                                                  obscureText: true,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: _copyToClipboard,
+                                            style: TextButton.styleFrom(foregroundColor: const Color(0xFF5865F2)),
+                                            child: const Text(
+                                              'Copy',
+                                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(height: 24),
 
