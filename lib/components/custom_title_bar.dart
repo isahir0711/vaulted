@@ -8,46 +8,57 @@ class CustomTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        height: 36,
-        decoration: const BoxDecoration(color: Colors.white),
-        child: Row(
-          children: [
-            // App controls
-            Expanded(
-              child: DragToMoveArea(
+    return Container(
+      height: 44,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Color(0xFFE9ECEF), width: 1)),
+      ),
+      child: Row(
+        children: [
+          // App controls
+          Expanded(
+            child: DragToMoveArea(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
                 child: Row(
                   children: [
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       onPressed: onAddPassword,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent, shape: const CircleBorder()),
-                      child: const Icon(Icons.add, color: Colors.white),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Add Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF007BFF),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        elevation: 0,
+                        minimumSize: const Size(0, 32),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            // Window controls
-            Row(
-              children: [
-                WindowButton(icon: Icons.minimize, onPressed: () => windowManager.minimize()),
-                WindowButton(
-                  icon: Icons.crop_square,
-                  onPressed: () async {
-                    if (await windowManager.isMaximized()) {
-                      windowManager.unmaximize();
-                    } else {
-                      windowManager.maximize();
-                    }
-                  },
-                ),
-                WindowButton(icon: Icons.close, onPressed: () => windowManager.close(), isClose: true),
-              ],
-            ),
-          ],
-        ),
+          ),
+          // Window controls
+          Row(
+            children: [
+              WindowButton(icon: Icons.minimize, onPressed: () => windowManager.minimize()),
+              WindowButton(
+                icon: Icons.crop_square,
+                onPressed: () async {
+                  if (await windowManager.isMaximized()) {
+                    windowManager.unmaximize();
+                  } else {
+                    windowManager.maximize();
+                  }
+                },
+              ),
+              WindowButton(icon: Icons.close, onPressed: () => windowManager.close(), isClose: true),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -76,14 +87,16 @@ class _WindowButtonState extends State<WindowButton> {
         onTap: widget.onPressed,
         child: Container(
           width: 46,
-          height: 40,
+          height: 44,
           decoration: BoxDecoration(
-            color: isHovered ? (widget.isClose ? Colors.red : Colors.grey.withOpacity(0.2)) : Colors.transparent,
+            color: isHovered
+                ? (widget.isClose ? const Color(0xFFDC3545) : const Color(0xFFF8F9FA))
+                : Colors.transparent,
           ),
           child: Icon(
             widget.icon,
             size: 16,
-            color: isHovered && widget.isClose ? Colors.white : Theme.of(context).colorScheme.onPrimaryContainer,
+            color: isHovered && widget.isClose ? Colors.white : const Color(0xFF6C757D),
           ),
         ),
       ),

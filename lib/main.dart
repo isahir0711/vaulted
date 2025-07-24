@@ -42,7 +42,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vaulted',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white)),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF007BFF), brightness: Brightness.light),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+        fontFamily: 'Inter',
+        useMaterial3: true,
+      ),
       home: const MyHomePage(title: 'Vaulted'),
       debugShowCheckedModeBanner: false,
     );
@@ -139,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8F9FA),
       body: Column(
         children: [
           // Custom title bar
