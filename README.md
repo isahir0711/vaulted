@@ -1,16 +1,39 @@
-# vaulted
+# Vaulted - Password Manager WIP
 
-A new Flutter project.
+## User Features Roadmap
 
-## Getting Started
+1. Master Password Implementation
 
-This project is a starting point for a Flutter application.
+   - Allow users to create a secure master password
+   - Implement encryption using master password as key
+   - Ensure password strength validation
 
-A few resources to get you started if this is your first Flutter project:
+2. Backup Functionality
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+   - Add backup creation capability
+   - Implement secure backup encryption
+   - Allow custom backup locations
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. Restore Functionality
+   - Enable backup restoration process
+   - Validate backup integrity
+   - Implement version control for backups
+
+## Technical Roadmap
+
+- [ ] UI Improvements
+
+  - Enhance user interface design
+  - Add accessibility features
+
+- [ ] MVVM Architecture
+
+  - Refactor code to MVVM pattern
+  - Create view models
+  - Implement data binding
+
+- [ ] CI/CD Pipeline
+  - Set up build automation
+  - Configure testing pipeline
+  - Implement release automation
+  - Create desktop app distribution workflow
