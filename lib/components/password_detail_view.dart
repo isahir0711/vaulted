@@ -97,7 +97,6 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
     }
 
     return Container(
-      color: const Color(0xFFFAFBFC),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: Container(
@@ -111,23 +110,11 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
                   Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE9ECEF)),
-                      boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2)),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image(
-                        image: AssetImage('assets/${selectedAccountType.name.toLowerCase()}_icon.png'),
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.account_circle, size: 32, color: Color(0xFF6C757D));
-                        },
-                      ),
+                    child: Image(
+                      image: AssetImage('assets/${selectedAccountType.name.toLowerCase()}_icon.png'),
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.account_circle, size: 32, color: Color(0xFF6C757D));
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),
