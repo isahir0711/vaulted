@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class AccountCard extends StatefulWidget {
   final String accountType;
+  final String username;
   final VoidCallback? onTap;
-  const AccountCard({super.key, required this.accountType, this.onTap});
+  const AccountCard({super.key, required this.accountType, required this.username, this.onTap});
 
   @override
   State<AccountCard> createState() => _AccountCardState();
