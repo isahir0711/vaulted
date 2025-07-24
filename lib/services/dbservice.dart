@@ -13,20 +13,10 @@ class Dbservice {
       join(await getDatabasesPath(), 'vaulted_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE passwords(id INTEGER PRIMARY KEY, encryptedValue TEXT, iv TEXT,accountType TEXT)',
+          'CREATE TABLE passwords(id INTEGER PRIMARY KEY, encryptedValue TEXT,userNameOrEmail TEXT, iv TEXT,accountType TEXT)',
         );
       },
-      version: 3, // Increment version to trigger migration
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          // Add the IV column to existing tables
-          await db.execute('ALTER TABLE passwords ADD COLUMN iv TEXT');
-        }
-        if (oldVersion < 3) {
-          // Add the accountType column to existing tables
-          await db.execute('ALTER TABLE passwords ADD COLUMN accountType TEXT');
-        }
-      },
+      version: 1,
     );
 
     return database;
@@ -56,9 +46,16 @@ class Dbservice {
             'encryptedValue': encryptedValue as String,
             'iv': iv as String?,
             'accountType': accountType as String?,
+            'userNameOrEmail': userNameOrEmail as String?,
           }
           in passwordMaps)
-        Password(id: id, encryptedValue: encryptedValue, iv: iv ?? '', accountType: _parseAccountType(accountType)),
+        Password(
+          id: id,
+          encryptedValue: encryptedValue,
+          iv: iv ?? '',
+          userNameOrEmail: userNameOrEmail ?? '',
+          accountType: _parseAccountType(accountType),
+        ),
     ];
   }
 
@@ -75,6 +72,7 @@ class Dbservice {
       return Password(
         id: passwordMap['id'] as int,
         encryptedValue: passwordMap['encryptedValue'] as String,
+        userNameOrEmail: passwordMap['encryptedValue'] as String,
         iv: passwordMap['iv'] as String? ?? '',
         accountType: _parseAccountType(passwordMap['accountType'] as String?),
       );

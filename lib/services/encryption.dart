@@ -6,7 +6,7 @@ import 'package:vaulted/services/dbservice.dart';
 class Encryption {
   static const String _masterKey = "my 32 length key................";
 
-  void encryptPassword(String password, {AccountTypes accountType = AccountTypes.none}) {
+  void encryptPassword(String password, String userNameOrEmail, {AccountTypes accountType = AccountTypes.none}) {
     if (_masterKey.length < 32) {
       print("dude we need a key with 32 min lenght");
       return;
@@ -21,6 +21,7 @@ class Encryption {
 
     //store the password and the IV into a localdb
     final passwordDto = Password(
+      userNameOrEmail: userNameOrEmail,
       encryptedValue: encrypted.base64,
       iv: iv.base64, // Store the IV as base64
       accountType: accountType,
