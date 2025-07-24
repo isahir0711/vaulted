@@ -107,6 +107,21 @@ class _MyHomePageState extends State<MyHomePage> {
     await _loadPasswords();
   }
 
+  Future<void> _deletePassword() async {
+    if (selectedPassword != null) {
+      // Delete the password from database
+      await Dbservice().deletePassword(selectedPassword!.id!);
+
+      // Refresh the passwords list
+      await _loadPasswords();
+
+      // Clear selection
+      setState(() {
+        selectedPassword = null;
+      });
+    }
+  }
+
   void _showAddPasswordDialog() {
     showDialog(
       context: context,
@@ -139,7 +154,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 // Password detail view
                 Expanded(
-                  child: PasswordDetailView(selectedPassword: selectedPassword, onUpdatePassword: _updatePassword),
+                  child: PasswordDetailView(
+                    selectedPassword: selectedPassword,
+                    onUpdatePassword: _updatePassword,
+                    onDeletePassword: _deletePassword,
+                  ),
                 ),
               ],
             ),

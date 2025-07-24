@@ -7,8 +7,14 @@ import 'package:vaulted/services/encryption.dart';
 class PasswordDetailView extends StatefulWidget {
   final Password? selectedPassword;
   final Function(String password, String username, AccountTypes accountType) onUpdatePassword;
+  final VoidCallback? onDeletePassword;
 
-  const PasswordDetailView({super.key, required this.selectedPassword, required this.onUpdatePassword});
+  const PasswordDetailView({
+    super.key,
+    required this.selectedPassword,
+    required this.onUpdatePassword,
+    this.onDeletePassword,
+  });
 
   @override
   State<PasswordDetailView> createState() => _PasswordDetailViewState();
@@ -167,15 +173,29 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
           ),
           const SizedBox(height: 24),
 
-          // Save Button
-          ElevatedButton(
-            onPressed: _handleSave,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: const Text('Save Changes'),
+          // Action Buttons
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: _handleSave,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: const Text('Save Changes'),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: widget.onDeletePassword,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
           ),
         ],
       ),
