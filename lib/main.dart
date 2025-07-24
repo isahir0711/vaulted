@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:vaulted/components/account_card.dart';
+import 'package:vaulted/models/password.dart';
 import 'package:vaulted/services/dbservice.dart';
 import 'package:vaulted/services/encryption.dart';
 import 'package:window_manager/window_manager.dart';
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vaulted',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.white)),
       home: const MyHomePage(title: 'Vaulted'),
       debugShowCheckedModeBanner: false,
     );
@@ -55,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _textController = TextEditingController();
 
+  List<Password> passwords = [];
   @override
   void initState() {
     _printPasswords();
@@ -62,8 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _printPasswords() async {
-    final passwords = await Dbservice().getPasswords();
-    print(passwords.length);
+    final loadedPasswords = await Dbservice().getPasswords();
+    setState(() {
+      passwords = loadedPasswords;
+    });
+    print('Loaded ${passwords.length} passwords');
     print(passwords);
   }
 
@@ -86,81 +92,94 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           // Custom title bar
-          Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
-            ),
-            child: Row(
-              children: [
-                // App icon and title
-                Expanded(
-                  child: DragToMoveArea(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Container(
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                // boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+              ),
+              child: Row(
+                children: [
+                  // App icon and title
+                  Expanded(
+                    child: DragToMoveArea(
                       child: Row(
                         children: [
-                          Icon(Icons.security, size: 20, color: Theme.of(context).colorScheme.primary),
-                          const SizedBox(width: 8),
-                          Text(
-                            widget.title,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          ElevatedButton(
+                            onPressed: () => {print("New password")},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              shape: const CircleBorder(),
                             ),
+                            child: Icon(Icons.add, color: Colors.white),
                           ),
+                          //Add Text field to search through the passwords
+                          // Icon(Icons.security, size: 20, color: Theme.of(context).colorScheme.primary),
+                          // const SizedBox(width: 8),
+                          // Text(
+                          //   widget.title,
+                          //   style: TextStyle(
+                          //     fontSize: 14,
+                          //     fontWeight: FontWeight.w500,
+                          //     color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                // Window controls
-                Row(
-                  children: [
-                    WindowButton(icon: Icons.minimize, onPressed: () => windowManager.minimize()),
-                    WindowButton(
-                      icon: Icons.crop_square,
-                      onPressed: () async {
-                        if (await windowManager.isMaximized()) {
-                          windowManager.unmaximize();
-                        } else {
-                          windowManager.maximize();
-                        }
-                      },
-                    ),
-                    WindowButton(icon: Icons.close, onPressed: () => windowManager.close(), isClose: true),
-                  ],
-                ),
-              ],
+                  // Window controls
+                  Row(
+                    children: [
+                      WindowButton(icon: Icons.minimize, onPressed: () => windowManager.minimize()),
+                      WindowButton(
+                        icon: Icons.crop_square,
+                        onPressed: () async {
+                          if (await windowManager.isMaximized()) {
+                            windowManager.unmaximize();
+                          } else {
+                            windowManager.maximize();
+                          }
+                        },
+                      ),
+                      WindowButton(icon: Icons.close, onPressed: () => windowManager.close(), isClose: true),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           // Main content
           Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextField(
-                      onSubmitted: (String value) => Encryption().encryptPassword(value),
-                      controller: _textController,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Enter text',
-                        hintText: 'Type something...',
+            child: Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        width: 300,
+                        child: passwords.isEmpty
+                            ? const Center(child: Text('No passwords found'))
+                            : ListView.separated(
+                                separatorBuilder: (context, index) => SizedBox(height: 8),
+                                itemCount: passwords.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return AccountCard();
+                                },
+                              ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(onPressed: _decryptPasswordWithId1, child: const Text('Decrypt Password with ID 1')),
-                  ],
+                      Expanded(child: Column(children: [Text("current")])),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
