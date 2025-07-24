@@ -1,11 +1,12 @@
 import 'package:encrypt/encrypt.dart';
+import 'package:vaulted/enums/account_types.dart';
 import 'package:vaulted/models/password.dart';
 import 'package:vaulted/services/dbservice.dart';
 
 class Encryption {
   static const String _masterKey = "my 32 length key................";
 
-  void encryptPassword(String password) {
+  void encryptPassword(String password, {AccountTypes accountType = AccountTypes.none}) {
     if (_masterKey.length < 32) {
       print("dude we need a key with 32 min lenght");
       return;
@@ -22,6 +23,7 @@ class Encryption {
     final passwordDto = Password(
       encryptedValue: encrypted.base64,
       iv: iv.base64, // Store the IV as base64
+      accountType: accountType,
     ); // Remove id parameter to let SQLite auto-generate it
     Dbservice().storePassword(passwordDto);
   }
