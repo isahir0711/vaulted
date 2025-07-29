@@ -33,20 +33,12 @@ class _AccountCardState extends State<AccountCard> {
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE9ECEF)),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image(
-                    image: AssetImage('assets/${widget.accountType.toLowerCase()}_icon.png'),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.account_circle, size: 24, color: Color(0xFF6C757D));
-                    },
-                  ),
+                child: Image(
+                  image: AssetImage('assets/${widget.accountType.toLowerCase()}_icon.png'),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.account_circle, size: 24, color: Color(0xFF6C757D));
+                  },
                 ),
               ),
               const SizedBox(width: 12),
