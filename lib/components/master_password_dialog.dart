@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 
+import 'package:vaulted/components/text_field.dart';
+
 class MasterPasswordDialog extends StatefulWidget {
   final Function(String password) onSave;
 
@@ -28,6 +30,7 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
     });
   }
 
+  //  LOL
   void _generateSecurePassword() {
     const String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
     final Random random = Random.secure();
@@ -53,7 +56,7 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
     }
   }
 
-  void _handleSave() async {
+  void _save() async {
     if (_passwordController.text.length < 32) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -74,7 +77,7 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       backgroundColor: Colors.white,
       child: Container(
         width: 600,
@@ -91,60 +94,44 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
             const SizedBox(height: 24),
 
             // Password TextField
-            _buildFormField(
-              label: 'Password',
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: const Color(0xFFE9ECEF)),
-                      ),
-                      child: TextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        style: const TextStyle(fontSize: 14, color: Color(0xFF212529)),
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF6C757D), size: 20),
-                          hintText: 'Enter password',
-                          hintStyle: TextStyle(color: Color(0xFFADB5BD), fontSize: 14),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        ),
-                      ),
-                    ),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomTextField(
+                    label: "Master Password",
+                    controller: _passwordController,
+                    isPassword: true,
+                    icon: Icons.lock_outline,
                   ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    statesController: _saveController,
-                    onPressed: _generateSecurePassword,
-                    icon: const Icon(Icons.refresh, size: 16),
-                    label: const Text('Generate'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF28A745),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      elevation: 0,
-                    ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  statesController: _saveController,
+                  onPressed: _generateSecurePassword,
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('Generate'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF28A745),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    elevation: 0,
                   ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _passwordController.text.isNotEmpty ? _copyPassword : null,
-                    icon: const Icon(Icons.copy, size: 16),
-                    label: const Text('Copy'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6C757D),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      elevation: 0,
-                    ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: _passwordController.text.isNotEmpty ? _copyPassword : null,
+                  icon: const Icon(Icons.copy, size: 16),
+                  label: const Text('Copy'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6C757D),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    elevation: 0,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             const SizedBox(height: 32),
 
@@ -154,12 +141,12 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _isPasswordValid ? _handleSave : null,
+                    onPressed: _isPasswordValid ? _save : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF007BFF),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                       elevation: 0,
                     ),
                     child: const Text('Save', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),

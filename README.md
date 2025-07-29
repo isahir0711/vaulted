@@ -4,16 +4,16 @@
 
 1. Master Password Implementation
 
-  - Allow users to create a secure master password [x]
-  - Implement encryption using master password as key [x]
-  - Ensure password strength validation [x] (only 32 lenght validation)
-    - Secure password (require to have special characters in the master password)
+- Allow users to create a secure master password [x]
+- Implement encryption using master password as key [x]
+- Ensure password strength validation [x] (only 32 lenght validation)
+  - Secure password (require to have special characters in the master password)
 
 2. Backup Functionality
 
-  - Add backup creation capability
-    - The backup can be restored using the master password
-  - Implement secure backup encryption
+- Add backup creation capability
+  - The backup can be restored using the master password
+- Implement secure backup encryption
 
 ## Technical Roadmap
 
