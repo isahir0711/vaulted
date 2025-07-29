@@ -40,13 +40,13 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
     }
   }
 
-  void _updateControllers() {
+  void _updateControllers() async {
     if (widget.selectedPassword != null) {
       selectedAccountType = widget.selectedPassword!.accountType;
       _editUsernameController.text = widget.selectedPassword!.userNameOrEmail;
 
       // Decrypt the password
-      final decryptedPassword = Encryption().decryptPassword(
+      final decryptedPassword = await Encryption().decryptPassword(
         widget.selectedPassword!.encryptedValue,
         widget.selectedPassword!.iv,
       );

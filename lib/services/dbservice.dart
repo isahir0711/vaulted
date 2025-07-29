@@ -11,12 +11,13 @@ class Dbservice {
       // `path` package is best practice to ensure the path is correctly
       // constructed for each platform.
       join(await getDatabasesPath(), 'vaulted_database.db'),
-      onCreate: (db, version) {
-        return db.execute(
+      onCreate: (db, version) async {
+        await db.execute(
           'CREATE TABLE passwords(id INTEGER PRIMARY KEY, encryptedValue TEXT,userNameOrEmail TEXT, iv TEXT,accountType TEXT)',
         );
+        await db.execute('CREATE TABLE user_config(masterPassword TEXT)');
       },
-      version: 1,
+      version: 2,
     );
 
     return database;
@@ -29,6 +30,45 @@ class Dbservice {
     // Insert the password into the correct table.
     // The toMap() method will automatically exclude id if it's null
     await db.insert('passwords', password.toMap());
+  }
+
+  Future<void> storeMasterPassword(String masterPassword) async {
+    // Get a reference to the database.
+    final db = await OpenDatabase();
+
+    // Insert the master password into the correct table.
+    await db.insert('user_config', {
+      'id': 1,
+      'masterPassword': masterPassword,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<bool> masterPasswordExists() async {
+    // Get a reference to the database.
+    final db = await OpenDatabase();
+
+    // Query the table for the master password.
+    final List<Map<String, Object?>> masterPasswordMap = await db.query('user_config');
+
+    //verify if there is a masterPassword stored
+    if (masterPasswordMap.isNotEmpty) {
+      final masterPassword = masterPasswordMap.first['masterPassword'] as String?;
+      return masterPassword != null && masterPassword.isNotEmpty;
+    }
+    return false;
+  }
+
+  Future<String?> getMasterPassword() async {
+    // Get a reference to the database.
+    final db = await OpenDatabase();
+
+    // Query the table for the master password.
+    final List<Map<String, Object?>> masterPasswordMap = await db.query('user_config');
+
+    if (masterPasswordMap.isNotEmpty) {
+      return masterPasswordMap.first['masterPassword'] as String?;
+    }
+    return null; // Return null if no master password found
   }
 
   // A method that retrieves all the passwords from the passwords table.

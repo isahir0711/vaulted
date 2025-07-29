@@ -4,15 +4,13 @@ import 'package:vaulted/models/password.dart';
 import 'package:vaulted/services/dbservice.dart';
 
 class Encryption {
-  static const String _masterPassword = "my 32 length key................";
-
-  void encryptPassword(String password, String userNameOrEmail, {AccountTypes accountType = AccountTypes.none}) {
-    if (_masterPassword.length < 32) {
-      print("dude we need a key with 32 min lenght");
+  void encryptPassword(String password, String userNameOrEmail, {AccountTypes accountType = AccountTypes.none}) async {
+    final masterPassword = await Dbservice().getMasterPassword();
+    if (masterPassword == null || masterPassword.isEmpty) {
+      print("Master password is not set. Cannot encrypt the password.");
       return;
     }
-
-    final key = Key.fromUtf8(_masterPassword);
+    final key = Key.fromUtf8(masterPassword);
     final iv = IV.fromLength(16);
 
     final encrypter = Encrypter(AES(key));
@@ -29,8 +27,13 @@ class Encryption {
     Dbservice().storePassword(passwordDto);
   }
 
-  String decryptPassword(String encryptedPassword, String ivBase64) {
-    final key = Key.fromUtf8(_masterPassword);
+  Future<String> decryptPassword(String encryptedPassword, String ivBase64) async {
+    final masterPassword = await Dbservice().getMasterPassword();
+    if (masterPassword == null || masterPassword.isEmpty) {
+      print("Master password is not set. Cannot encrypt the password.");
+      return "";
+    }
+    final key = Key.fromUtf8(masterPassword);
     final iv = IV.fromBase64(ivBase64); // Use the stored IV
     final encrypter = Encrypter(AES(key));
 
