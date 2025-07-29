@@ -160,20 +160,6 @@ class _MasterPasswordDialogState extends State<MasterPasswordDialog> {
     );
   }
 
-  Widget _buildFormField({required String label, required Widget child}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF495057)),
-        ),
-        const SizedBox(height: 8),
-        child,
-      ],
-    );
-  }
-
   @override
   void dispose() {
     _passwordController.dispose();
