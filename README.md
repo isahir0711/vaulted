@@ -1,34 +1,19 @@
 # Vaulted - Password Manager WIP
 
-## Security Features
-
-- Mobile Access Security
-  - 4-digit PIN implementation
-  - Biometric authentication (fingerprint/face recognition)
-  - Session timeout controls
-
-## Mobile App Development
-
-- [ ] Android Development
-
 ## User Features Roadmap
 
 1. Master Password Implementation
 
-   - Allow users to create a secure master password
-   - Implement encryption using master password as key
-   - Ensure password strength validation
+  - Allow users to create a secure master password [x]
+  - Implement encryption using master password as key [x]
+  - Ensure password strength validation [x] (only 32 lenght validation)
+    - Secure password (require to have special characters in the master password)
 
 2. Backup Functionality
 
-   - Add backup creation capability
-   - Implement secure backup encryption
-   - Allow custom backup locations
-
-3. Restore Functionality
-   - Enable backup restoration process
-   - Validate backup integrity
-   - Implement version control for backups
+  - Add backup creation capability
+    - The backup can be restored using the master password
+  - Implement secure backup encryption
 
 ## Technical Roadmap
 
