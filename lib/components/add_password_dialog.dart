@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vaulted/enums/account_types.dart';
+import 'package:vaulted/viewmodels/main_viewmodel.dart';
 
 class AddPasswordDialog extends StatefulWidget {
-  final Function(String password, String username, AccountTypes accountType) onSave;
-
-  const AddPasswordDialog({super.key, required this.onSave});
+  const AddPasswordDialog({super.key});
 
   @override
   State<AddPasswordDialog> createState() => _AddPasswordDialogState();
@@ -17,8 +17,11 @@ class _AddPasswordDialogState extends State<AddPasswordDialog> {
 
   void _handleSave() async {
     if (_passwordController.text.isNotEmpty && _usernameController.text.isNotEmpty) {
-      widget.onSave(_passwordController.text, _usernameController.text, _selectedAccountType);
-      Navigator.of(context).pop();
+      Provider.of<MainViewModel>(
+        context,
+        listen: false,
+      ).addnewPassword(_usernameController.text, _passwordController.text, _selectedAccountType);
+      Navigator.pop(context);
     }
   }
 

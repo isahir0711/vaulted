@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vaulted/components/account_card.dart';
-import 'package:vaulted/models/password.dart';
+import 'package:vaulted/viewmodels/main_viewmodel.dart';
 
 class PasswordList extends StatelessWidget {
-  final List<Password> passwords;
-  final Function(Password) onPasswordSelected;
-
-  const PasswordList({super.key, required this.passwords, required this.onPasswordSelected});
+  const PasswordList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +31,7 @@ class PasswordList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(color: const Color(0xFFF8F9FA), borderRadius: BorderRadius.circular(12)),
                   child: Text(
-                    '${passwords.length}',
+                    '${Provider.of<MainViewModel>(context, listen: false).passwords.length}',
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF6C757D)),
                   ),
                 ),
@@ -42,7 +40,7 @@ class PasswordList extends StatelessWidget {
           ),
           // Password list
           Expanded(
-            child: passwords.isEmpty
+            child: Provider.of<MainViewModel>(context).passwords.isEmpty
                 ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -58,16 +56,18 @@ class PasswordList extends StatelessWidget {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: passwords.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return AccountCard(
-                        accountType: passwords[index].accountType.name,
-                        username: passwords[index].userNameOrEmail,
-                        onTap: () => onPasswordSelected(passwords[index]),
-                      );
-                    },
+                : Consumer<MainViewModel>(
+                    builder: (context, viewmodel, child) => ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: viewmodel.passwords.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return AccountCard(
+                          accountType: viewmodel.passwords[index].accountType.name,
+                          username: viewmodel.passwords[index].userNameOrEmail,
+                          onTap: () => viewmodel.passwordSelection(viewmodel.passwords[index]),
+                        );
+                      },
+                    ),
                   ),
           ),
         ],

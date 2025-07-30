@@ -4,7 +4,7 @@ import 'package:vaulted/enums/account_types.dart';
 import 'package:vaulted/models/password.dart';
 
 class Dbservice {
-  Future<Database> OpenDatabase() async {
+  Future<Database> _openDatabase() async {
     // Open the database and store the reference.
     final database = openDatabase(
       // Set the path to the database. Note: Using the `join` function from the
@@ -23,18 +23,25 @@ class Dbservice {
     return database;
   }
 
-  Future<void> storePassword(Password password) async {
+  Future<int> storePassword(Password password) async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Insert the password into the correct table.
     // The toMap() method will automatically exclude id if it's null
-    await db.insert('passwords', password.toMap());
+    int id = await db.insert('passwords', password.toMap());
+    return id;
+  }
+
+  Future<void> updatePassword(Password password, int id) async {
+    final db = await _openDatabase();
+
+    await db.update('passwords', password.toMap(), where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> storeMasterPassword(String masterPassword) async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Insert the master password into the correct table.
     await db.insert('user_config', {
@@ -45,7 +52,7 @@ class Dbservice {
 
   Future<bool> masterPasswordExists() async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Query the table for the master password.
     final List<Map<String, Object?>> masterPasswordMap = await db.query('user_config');
@@ -60,7 +67,7 @@ class Dbservice {
 
   Future<String?> getMasterPassword() async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Query the table for the master password.
     final List<Map<String, Object?>> masterPasswordMap = await db.query('user_config');
@@ -74,7 +81,7 @@ class Dbservice {
   // A method that retrieves all the passwords from the passwords table.
   Future<List<Password>> getPasswords() async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Query the table for all the passwords.
     final List<Map<String, Object?>> passwordMaps = await db.query('passwords');
@@ -102,7 +109,7 @@ class Dbservice {
   // A method that retrieves a password by ID
   Future<Password?> getPasswordById(int id) async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Query the table for the password with the specific ID.
     final List<Map<String, Object?>> passwordMaps = await db.query('passwords', where: 'id = ?', whereArgs: [id]);
@@ -123,7 +130,7 @@ class Dbservice {
 
   Future<void> deleteAll() async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Remove all passwords from the database.
     await db.delete('passwords');
@@ -131,7 +138,7 @@ class Dbservice {
 
   Future<void> deletePassword(int id) async {
     // Get a reference to the database.
-    final db = await OpenDatabase();
+    final db = await _openDatabase();
 
     // Remove the specific password from the database.
     await db.delete('passwords', where: 'id = ?', whereArgs: [id]);

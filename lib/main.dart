@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:vaulted/viewmodels/main_viewmodel.dart';
 import 'package:vaulted/views/home_view.dart';
 import 'package:window_manager/window_manager.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize window manager
@@ -24,7 +26,7 @@ void main() async {
     await windowManager.focus();
   });
 
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (context) => MainViewModel(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Vaulted'),
+      home: MyHomePage(title: 'Vaulted'),
       debugShowCheckedModeBanner: false,
     );
   }

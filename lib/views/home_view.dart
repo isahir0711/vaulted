@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vaulted/components/add_password_dialog.dart';
 import 'package:vaulted/components/custom_title_bar.dart';
 import 'package:vaulted/components/master_password_dialog.dart';
 import 'package:vaulted/components/password_detail_view.dart';
 import 'package:vaulted/components/password_list.dart';
-import 'package:vaulted/enums/account_types.dart';
-import 'package:vaulted/models/password.dart';
 import 'package:vaulted/services/dbservice.dart';
-import 'package:vaulted/services/encryption.dart';
+import 'package:vaulted/viewmodels/main_viewmodel.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -19,9 +18,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Password> passwords = [];
-  Password? selectedPassword;
-
   @override
   void initState() {
     //here were going to check if the user has a saved master password to encrypt the passwords
@@ -49,64 +45,32 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _loadPasswords() async {
-    final loadedPasswords = await Dbservice().getPasswords();
-    setState(() {
-      passwords = loadedPasswords;
-    });
+    Provider.of<MainViewModel>(context, listen: false).getPasswords();
   }
 
-  void _selectPassword(Password password) {
-    setState(() {
-      selectedPassword = password;
-    });
-  }
+  // Future<void> _updatePassword(String password, String username, AccountTypes accountType) async {
+  //   if (selectedPassword != null) {
+  //     // Delete the old password
+  //     await Dbservice().deletePassword(selectedPassword!.id!);
 
-  Future<void> _updatePassword(String password, String username, AccountTypes accountType) async {
-    if (selectedPassword != null) {
-      // Delete the old password
-      await Dbservice().deletePassword(selectedPassword!.id!);
+  //     // Create a new encrypted password with the updated values
+  //     Encryption().encryptPassword(password, username, accountType: accountType);
 
-      // Create a new encrypted password with the updated values
-      Encryption().encryptPassword(password, username, accountType: accountType);
+  //     // Refresh the passwords list
+  //     await _loadPasswords();
 
-      // Refresh the passwords list
-      await _loadPasswords();
-
-      // Clear selection
-      setState(() {
-        selectedPassword = null;
-      });
-    }
-  }
-
-  Future<void> _addPassword(String password, String username, AccountTypes accountType) async {
-    // Encrypt and save the password
-    Encryption().encryptPassword(password, username, accountType: accountType);
-
-    // Refresh the passwords list
-    await _loadPasswords();
-  }
-
-  Future<void> _deletePassword() async {
-    if (selectedPassword != null) {
-      // Delete the password from database
-      await Dbservice().deletePassword(selectedPassword!.id!);
-
-      // Refresh the passwords list
-      await _loadPasswords();
-
-      // Clear selection
-      setState(() {
-        selectedPassword = null;
-      });
-    }
-  }
+  //     // Clear selection
+  //     setState(() {
+  //       selectedPassword = null;
+  //     });
+  //   }
+  // }
 
   void _showAddPasswordDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddPasswordDialog(onSave: _addPassword);
+        return AddPasswordDialog();
       },
     );
   }
@@ -130,16 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               children: [
                 // Password list
-                PasswordList(passwords: passwords, onPasswordSelected: _selectPassword),
+                PasswordList(),
 
                 // Password detail view
-                Expanded(
-                  child: PasswordDetailView(
-                    selectedPassword: selectedPassword,
-                    onUpdatePassword: _updatePassword,
-                    onDeletePassword: _deletePassword,
-                  ),
-                ),
+                Expanded(child: PasswordDetailView()),
               ],
             ),
           ),
