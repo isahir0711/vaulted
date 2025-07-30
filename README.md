@@ -22,7 +22,7 @@
   - Enhance user interface design
   - Add accessibility features
 
-- [ ] MVVM Architecture
+- [x] MVVM Architecture
 
   - Refactor code to MVVM pattern
   - Create view models
