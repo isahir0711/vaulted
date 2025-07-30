@@ -15,52 +15,51 @@ class _AccountCardState extends State<AccountCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => isHovered = true),
-      onExit: (_) => setState(() => isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 1),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: isHovered ? const Color(0xFFF8F9FA) : Colors.white,
-            border: Border(bottom: BorderSide(color: const Color(0xFFE9ECEF), width: 1)),
-          ),
-          child: Row(
-            children: [
-              // Account icon with circular background
-              Container(
-                width: 40,
-                height: 40,
-                child: Image(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => isHovered = true),
+        onExit: (_) => setState(() => isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: isHovered ? const Color(0xFFF8F9FA) : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Image(
+                  height: 36,
+                  width: 36,
                   image: AssetImage('assets/${widget.accountType.toLowerCase()}_icon.png'),
-                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return const Icon(Icons.account_circle, size: 24, color: Color(0xFF6C757D));
                   },
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Account details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.accountType,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF212529)),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      widget.username,
-                      style: const TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                const SizedBox(width: 12),
+                // Account details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.accountType,
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF212529)),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.username,
+                        style: const TextStyle(fontSize: 13, color: Color(0xFF6C757D)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

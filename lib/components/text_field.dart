@@ -5,13 +5,15 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.label,
     required this.controller,
-    required this.isPassword,
+    this.isPassword,
     required this.icon,
+    this.hintText,
   });
   final String label;
   final TextEditingController controller;
-  final bool isPassword;
+  final bool? isPassword;
   final IconData icon;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +27,16 @@ class CustomTextField extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label),
+              Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
               TextField(
                 controller: controller,
-                obscureText: isPassword,
-                decoration: InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(4)),
+                obscureText: isPassword ?? false,
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  hintText: hintText,
+                  hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(253, 196, 196, 196)),
+                ),
               ),
             ],
           ),

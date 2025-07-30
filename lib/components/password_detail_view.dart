@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:vaulted/components/text_field.dart';
 import 'package:vaulted/viewmodels/main_viewmodel.dart';
@@ -16,12 +17,17 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
     super.initState();
   }
 
-  void _handleSave() {
-    Provider.of<MainViewModel>(context, listen: false).updatePassword();
+  Future<void> _handleSave() async {
+    await Provider.of<MainViewModel>(context, listen: false).updatePassword();
+    Provider.of<MainViewModel>(context, listen: false).isPasswordSelected = false;
   }
 
-  void _deletePassword(int id) {
-    Provider.of<MainViewModel>(context, listen: false).deletePassword(id);
+  Future<void> _deletePassword(int id) async {
+    await Provider.of<MainViewModel>(context, listen: false).deletePassword(id);
+  }
+
+  void _copyPassword() async {
+    await Provider.of<MainViewModel>(context, listen: false).copyToClipboard();
   }
 
   @override
@@ -66,7 +72,7 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
                       height: 48,
                       image: AssetImage('assets/${value.selectedPasswordAccountType.name.toLowerCase()}_icon.png'),
                       errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.account_circle, size: 32, color: Color(0xFF6C757D));
+                        return const Icon(Icons.error, size: 32, color: Color(0xFF6C757D));
                       },
                     ),
                   ),
@@ -101,13 +107,25 @@ class _PasswordDetailViewState extends State<PasswordDetailView> {
               const SizedBox(height: 20),
 
               // Password Field
-              Consumer<MainViewModel>(
-                builder: (context, value, child) => CustomTextField(
-                  label: "Password",
-                  controller: value.passwordEditController,
-                  isPassword: true,
-                  icon: Icons.lock_outline,
-                ),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  Flexible(
+                    flex: 3,
+                    child: Consumer<MainViewModel>(
+                      builder: (context, value, child) => CustomTextField(
+                        label: "Password",
+                        controller: value.passwordEditController,
+                        isPassword: true,
+                        icon: Icons.lock_outline,
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    flex: 2,
+                    child: TextButton(onPressed: _copyPassword, child: Text("Copy")),
+                  ),
+                ],
               ),
             ],
           ),

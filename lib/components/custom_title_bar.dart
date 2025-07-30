@@ -20,21 +20,20 @@ class CustomTitleBar extends StatelessWidget {
           Expanded(
             child: DragToMoveArea(
               child: Padding(
-                padding: const EdgeInsets.only(left: 16),
+                padding: const EdgeInsets.only(left: 12),
                 child: Row(
                   children: [
-                    ElevatedButton.icon(
+                    ElevatedButton(
                       onPressed: onAddPassword,
-                      icon: const Icon(Icons.add, size: 18),
-                      label: const Text('Add Password', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF007BFF),
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        padding: const EdgeInsets.all(12),
+                        shape: CircleBorder(),
                         elevation: 0,
                         minimumSize: const Size(0, 32),
                       ),
+                      child: const Icon(Icons.add, size: 18),
                     ),
                   ],
                 ),

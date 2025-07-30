@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vaulted/DTOs/password_dto.dart';
 import 'package:vaulted/enums/account_types.dart';
@@ -14,6 +15,7 @@ class MainViewModel extends ChangeNotifier {
   AccountTypes selectedPasswordAccountType = AccountTypes.Amazon;
   int selectedPasswordId = 0;
   bool isPasswordSelected = false;
+  String selectedPassword = "";
   UnmodifiableListView<PasswordDTO> get passwords => UnmodifiableListView(_passwords);
 
   final TextEditingController passwordEditController = TextEditingController();
@@ -35,7 +37,7 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePassword() async {
+  Future<void> updatePassword() async {
     //use the textediting controllers text values;
     final passwordToEncrypt = passwordEditController.text;
     final encryptedResponse = await _encryptionService.encryptPassword(passwordToEncrypt);
@@ -84,7 +86,7 @@ class MainViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deletePassword(int id) async {
+  Future<void> deletePassword(int id) async {
     isPasswordSelected = false;
     //TODO: Check if the password exists on the db
 
@@ -100,6 +102,11 @@ class MainViewModel extends ChangeNotifier {
     usernameEditController.text = selected.userNameOrEmail;
     selectedPasswordId = selected.id;
     selectedPasswordAccountType = selected.accountType;
+    selectedPassword = selected.password;
     notifyListeners();
+  }
+
+  Future<void> copyToClipboard() async {
+    await Clipboard.setData(ClipboardData(text: selectedPassword));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vaulted/components/text_field.dart';
 import 'package:vaulted/enums/account_types.dart';
 import 'package:vaulted/viewmodels/main_viewmodel.dart';
 
@@ -55,13 +56,23 @@ class _AddPasswordDialogState extends State<AddPasswordDialog> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: const Color(0xFFE9ECEF)),
                 ),
                 child: DropdownButtonFormField<AccountTypes>(
                   value: _selectedAccountType,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.apps_outlined, color: Color(0xFF6C757D), size: 20),
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Image(
+                        image: AssetImage('assets/${_selectedAccountType.name.toLowerCase()}_icon.png'),
+                        height: 8,
+                        width: 8,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.error, size: 16, color: Color(0xFF6C757D));
+                        },
+                      ),
+                    ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
@@ -84,51 +95,22 @@ class _AddPasswordDialogState extends State<AddPasswordDialog> {
             const SizedBox(height: 20),
 
             // Username TextField
-            _buildFormField(
+            CustomTextField(
               label: 'Username',
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE9ECEF)),
-                ),
-                child: TextField(
-                  controller: _usernameController,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF212529)),
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.person_outline, color: Color(0xFF6C757D), size: 20),
-                    hintText: 'Enter username or email',
-                    hintStyle: TextStyle(color: Color(0xFFADB5BD), fontSize: 14),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  ),
-                ),
-              ),
+              controller: _usernameController,
+              isPassword: false,
+              icon: Icons.person_outlined,
+              hintText: 'email@example.com',
             ),
             const SizedBox(height: 20),
 
             // Password TextField
-            _buildFormField(
+            CustomTextField(
               label: 'Password',
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE9ECEF)),
-                ),
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF212529)),
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.lock_outline, color: Color(0xFF6C757D), size: 20),
-                    hintText: 'Enter password',
-                    hintStyle: TextStyle(color: Color(0xFFADB5BD), fontSize: 14),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  ),
-                ),
-              ),
+              controller: _passwordController,
+              isPassword: true,
+              icon: Icons.lock_outline,
+              hintText: 'Enter your password',
             ),
             const SizedBox(height: 32),
 
