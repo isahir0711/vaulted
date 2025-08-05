@@ -22,12 +22,6 @@
   - Enhance user interface design
   - Add accessibility features
 
-- [x] MVVM Architecture
-
-  - Refactor code to MVVM pattern
-  - Create view models
-  - Implement data binding
-
 - [ ] CI/CD Pipeline
   - Set up build automation
   - Configure testing pipeline
