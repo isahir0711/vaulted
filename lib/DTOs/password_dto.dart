@@ -5,7 +5,6 @@ class PasswordDTO {
   final String userNameOrEmail;
   final String password;
   final AccountTypes accountType;
-
   PasswordDTO({required this.id, required this.userNameOrEmail, required this.password, required this.accountType});
 }
 

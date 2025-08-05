@@ -1,12 +1,12 @@
 import 'package:encrypt/encrypt.dart';
+import 'package:vaulted/Error/result.dart';
 import 'package:vaulted/services/dbservice.dart';
 
 class EncryptionService {
-  Future<EncryptionResponse> encryptPassword(String password) async {
+  Future<Result<EncryptionResponse>> encryptPassword(String password) async {
     final masterPassword = await Dbservice().getMasterPassword();
     if (masterPassword == null || masterPassword.isEmpty) {
-      // print("Master password is not set. Cannot encrypt the password.");
-      return EncryptionResponse(encryptedPassword: "", iV: "");
+      return Result.error("Master password is not set");
     }
     final key = Key.fromUtf8(masterPassword);
     final iv = IV.fromLength(16);
@@ -15,14 +15,14 @@ class EncryptionService {
 
     final encrypted = encrypter.encrypt(password, iv: iv);
 
-    return EncryptionResponse(encryptedPassword: encrypted.base64, iV: iv.base64);
+    return Result.ok(EncryptionResponse(encryptedPassword: encrypted.base64, iV: iv.base64));
   }
 
-  Future<String> decryptPassword(String encryptedPassword, String ivBase64) async {
+  Future<Result<String>> decryptPassword(String encryptedPassword, String ivBase64) async {
     final masterPassword = await Dbservice().getMasterPassword();
     if (masterPassword == null || masterPassword.isEmpty) {
       // print("Master password is not set. Cannot encrypt the password.");
-      return "";
+      return Result.error("Master password not set cannot decrypt");
     }
     final key = Key.fromUtf8(masterPassword);
     final iv = IV.fromBase64(ivBase64); // Use the stored IV
@@ -30,7 +30,7 @@ class EncryptionService {
 
     final encrypted = Encrypted.fromBase64(encryptedPassword);
     final decrypted = encrypter.decrypt(encrypted, iv: iv);
-    return decrypted;
+    return Result.ok(decrypted);
   }
 }
 

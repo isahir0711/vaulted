@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:vaulted/Error/result.dart';
 import 'package:vaulted/enums/account_types.dart';
 import 'package:vaulted/models/password.dart';
 
@@ -107,7 +108,7 @@ class Dbservice {
   }
 
   // A method that retrieves a password by ID
-  Future<Password?> getPasswordById(int id) async {
+  Future<Result<Password>> getPasswordById(int id) async {
     // Get a reference to the database.
     final db = await _openDatabase();
 
@@ -116,16 +117,17 @@ class Dbservice {
 
     if (passwordMaps.isNotEmpty) {
       final passwordMap = passwordMaps.first;
-      return Password(
+      final pass = Password(
         id: passwordMap['id'] as int,
         encryptedValue: passwordMap['encryptedValue'] as String,
-        userNameOrEmail: passwordMap['encryptedValue'] as String,
+        userNameOrEmail: passwordMap['userNameOrEmail'] as String,
         iv: passwordMap['iv'] as String? ?? '',
         accountType: _parseAccountType(passwordMap['accountType'] as String?),
       );
+      return Result.ok(pass);
     }
 
-    return null; // Return null if no password found with the given ID
+    return Result.error("no password found"); // Return null if no password found with the given ID
   }
 
   Future<void> deleteAll() async {
@@ -136,12 +138,18 @@ class Dbservice {
     await db.delete('passwords');
   }
 
-  Future<void> deletePassword(int id) async {
+  Future<bool> deletePassword(int id) async {
     // Get a reference to the database.
     final db = await _openDatabase();
 
+    final exists = await getPasswordById(id);
+
+    if (!exists.isSuccess) {
+      return false;
+    }
     // Remove the specific password from the database.
     await db.delete('passwords', where: 'id = ?', whereArgs: [id]);
+    return true;
   }
 
   // Helper method to parse account type from string
