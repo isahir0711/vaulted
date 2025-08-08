@@ -27,4 +27,13 @@ class Password {
     }
     return map;
   }
+
+  Map<String, Object> toJson() {
+    return {'iv': iv, 'password': encryptedValue};
+  }
+
+  @override
+  String toString() {
+    return "$accountType, $userNameOrEmail, $encryptedValue, $iv";
+  }
 }

@@ -107,6 +107,34 @@ class Dbservice {
     ];
   }
 
+  Future<Result<List<Password>>> getAll() async {
+    final db = await _openDatabase();
+
+    final List<Map<String, Object?>> passwordMaps = await db.query('passwords');
+
+    if (passwordMaps.isEmpty) {
+      return Result.error("empty password list");
+    }
+
+    return Result.ok([
+      for (final {
+            'id': id as int,
+            'encryptedValue': encryptedValue as String,
+            'iv': iv as String?,
+            'accountType': accountType as String?,
+            'userNameOrEmail': userNameOrEmail as String?,
+          }
+          in passwordMaps)
+        Password(
+          id: id,
+          encryptedValue: encryptedValue,
+          iv: iv ?? '',
+          userNameOrEmail: userNameOrEmail ?? '',
+          accountType: _parseAccountType(accountType),
+        ),
+    ]);
+  }
+
   // A method that retrieves a password by ID
   Future<Result<Password>> getPasswordById(int id) async {
     // Get a reference to the database.

@@ -20,21 +20,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    //here were going to check if the user has a saved master password to encrypt the passwords
     _checkMasterPassword();
     _loadPasswords();
     super.initState();
   }
 
   void _checkMasterPassword() async {
-    //TODO: Disable escape key if master password is not set
     final masterPasswordExists = await Dbservice().masterPasswordExists();
     if (!masterPasswordExists) {
-      //disable escape key
-
-      // show a dialog to create the master password
       await showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (context) => MasterPasswordDialog(
           onSave: (password) async {
             await Dbservice().storeMasterPassword(password);
@@ -47,24 +43,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadPasswords() async {
     Provider.of<MainViewModel>(context, listen: false).getPasswords();
   }
-
-  // Future<void> _updatePassword(String password, String username, AccountTypes accountType) async {
-  //   if (selectedPassword != null) {
-  //     // Delete the old password
-  //     await Dbservice().deletePassword(selectedPassword!.id!);
-
-  //     // Create a new encrypted password with the updated values
-  //     Encryption().encryptPassword(password, username, accountType: accountType);
-
-  //     // Refresh the passwords list
-  //     await _loadPasswords();
-
-  //     // Clear selection
-  //     setState(() {
-  //       selectedPassword = null;
-  //     });
-  //   }
-  // }
 
   void _showAddPasswordDialog() {
     showDialog(

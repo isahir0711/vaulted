@@ -21,7 +21,6 @@ class EncryptionService {
   Future<Result<String>> decryptPassword(String encryptedPassword, String ivBase64) async {
     final masterPassword = await Dbservice().getMasterPassword();
     if (masterPassword == null || masterPassword.isEmpty) {
-      // print("Master password is not set. Cannot encrypt the password.");
       return Result.error("Master password not set cannot decrypt");
     }
     final key = Key.fromUtf8(masterPassword);

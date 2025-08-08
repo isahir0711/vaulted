@@ -1,15 +1,18 @@
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vaulted/DTOs/password_dto.dart';
 import 'package:vaulted/enums/account_types.dart';
 import 'package:vaulted/models/password.dart';
+import 'package:vaulted/services/backup.dart';
 import 'package:vaulted/services/dbservice.dart';
 import 'package:vaulted/services/encryption.dart';
 
 class MainViewModel extends ChangeNotifier {
   final Dbservice _dbservice = Dbservice();
+  final BackupService _backupService = BackupService();
   final EncryptionService _encryptionService = EncryptionService();
   final List<PasswordDTO> _passwords = [];
   AccountTypes selectedPasswordAccountType = AccountTypes.Amazon;
@@ -28,7 +31,8 @@ class MainViewModel extends ChangeNotifier {
       final passwordResponse = await EncryptionService().decryptPassword(pass.encryptedValue, pass.iv);
 
       if (!passwordResponse.isSuccess) {
-        print("Loggin issue with the decryption ${passwordResponse.errorMessage}");
+        //TODO: ADD LOGGIN FOR THIS
+        // print("Loggin issue with the decryption ${passwordResponse.errorMessage}");
         return;
       }
 
@@ -49,7 +53,8 @@ class MainViewModel extends ChangeNotifier {
     final encryptedResponse = await _encryptionService.encryptPassword(passwordToEncrypt);
 
     if (!encryptedResponse.isSuccess) {
-      print("Main_ViewModel updatePassword() ${encryptedResponse.errorMessage}");
+      //TODO: Loggin
+      // print("Main_ViewModel updatePassword() ${encryptedResponse.errorMessage}");
       return;
     }
 
@@ -78,7 +83,8 @@ class MainViewModel extends ChangeNotifier {
     final paswordEncryptionResponse = await EncryptionService().encryptPassword(password);
 
     if (!paswordEncryptionResponse.isSuccess) {
-      print("main_viewmodel addnewPassword() ${paswordEncryptionResponse.errorMessage}");
+      //TODO: loggin
+      // print("main_viewmodel addnewPassword() ${paswordEncryptionResponse.errorMessage}");
       return;
     }
 
@@ -94,7 +100,8 @@ class MainViewModel extends ChangeNotifier {
     final roundtripRes = await _dbservice.getPasswordById(id);
 
     if (!roundtripRes.isSuccess) {
-      print("Error addnewPAssword() ${roundtripRes.errorMessage}");
+      //TODO: loggin
+      // print("Error addnewPAssword() ${roundtripRes.errorMessage}");
       return;
     }
 
@@ -104,7 +111,8 @@ class MainViewModel extends ChangeNotifier {
     );
 
     if (!decryptRountripRes.isSuccess) {
-      print("Error decrypting addnewPassword() ${decryptRountripRes.errorMessage}");
+      //TODO: loggin
+      // print("Error decrypting addnewPassword() ${decryptRountripRes.errorMessage}");
       return;
     }
 
@@ -114,8 +122,6 @@ class MainViewModel extends ChangeNotifier {
       password: decryptRountripRes.value!,
       accountType: roundtripRes.value!.accountType,
     );
-
-    print(addedPassword.toString());
 
     _passwords.add(addedPassword);
     notifyListeners();
@@ -143,5 +149,27 @@ class MainViewModel extends ChangeNotifier {
 
   Future<void> copyToClipboard() async {
     await Clipboard.setData(ClipboardData(text: selectedPassword));
+  }
+
+  void generateBackUp() async {
+    final passwordsRes = await _dbservice.getAll();
+
+    if (!passwordsRes.isSuccess) {
+      //TODO: loggin
+      // print(passwordsRes.errorMessage);
+    }
+
+    final passwords = passwordsRes.value;
+
+    final passwordsJson = passwords!.map(
+      (password) => {
+        'accountType': password.accountType.name,
+        'username': password.userNameOrEmail,
+        'password': password.encryptedValue,
+        'iv': password.iv,
+      },
+    );
+
+    _backupService.writeBackUp(passwordsJson.toString());
   }
 }

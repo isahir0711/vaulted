@@ -12,7 +12,6 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
-
   WindowOptions windowOptions = const WindowOptions(
     size: Size(900, 600),
     center: true,
@@ -31,8 +30,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

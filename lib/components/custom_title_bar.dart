@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vaulted/viewmodels/main_viewmodel.dart';
 import 'package:window_manager/window_manager.dart';
 
 class CustomTitleBar extends StatelessWidget {
@@ -8,6 +10,10 @@ class CustomTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    backup() {
+      Provider.of<MainViewModel>(context, listen: false).generateBackUp();
+    }
+
     return Container(
       height: 44,
       decoration: const BoxDecoration(
@@ -34,6 +40,18 @@ class CustomTitleBar extends StatelessWidget {
                         minimumSize: const Size(0, 32),
                       ),
                       child: const Icon(Icons.add, size: 18),
+                    ),
+                    ElevatedButton(
+                      onPressed: backup,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF007BFF),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(12),
+                        shape: CircleBorder(),
+                        elevation: 0,
+                        minimumSize: const Size(0, 32),
+                      ),
+                      child: const Icon(Icons.backup, size: 18),
                     ),
                   ],
                 ),
