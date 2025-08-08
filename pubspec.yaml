@@ -69,7 +69,9 @@ flutter:
     - assets/github_icon.png
     - assets/facebook_icon.png
     - assets/mercado_icon.png
-    - assets/none_icon.png
+    - assets/amazon_icon.png
+    - assets/microsoft_icon.png
+    - assets/outlook_icon.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

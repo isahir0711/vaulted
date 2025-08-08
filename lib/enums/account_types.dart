@@ -1,1 +1,1 @@
-enum AccountTypes { Google, Facebook, Amazon, Twitch, Outlook, Mercado_Libre, Infonavit, Github, Discord, none }
+enum AccountTypes { Google, Facebook, Amazon, Twitch, Outlook, Microsoft, Mercado, Github, Discord, none }

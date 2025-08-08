@@ -26,6 +26,20 @@ class _AddPasswordDialogState extends State<AddPasswordDialog> {
     }
   }
 
+  Widget defAccountImage() {
+    if (_selectedAccountType != AccountTypes.none) {
+      return Image(
+        image: AssetImage('assets/${_selectedAccountType.name.toLowerCase()}_icon.png'),
+        height: 8,
+        width: 8,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(Icons.error, size: 16, color: Color(0xFF6C757D));
+        },
+      );
+    }
+    return Icon(Icons.person, size: 16, color: Color(0xFF6C757D));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -62,17 +76,7 @@ class _AddPasswordDialogState extends State<AddPasswordDialog> {
                 child: DropdownButtonFormField<AccountTypes>(
                   value: _selectedAccountType,
                   decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Image(
-                        image: AssetImage('assets/${_selectedAccountType.name.toLowerCase()}_icon.png'),
-                        height: 8,
-                        width: 8,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.error, size: 16, color: Color(0xFF6C757D));
-                        },
-                      ),
-                    ),
+                    prefixIcon: Padding(padding: EdgeInsets.all(8.0), child: defAccountImage()),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
